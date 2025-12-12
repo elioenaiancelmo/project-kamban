@@ -13,26 +13,98 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Container Principal -->
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-clipboard-list"></i>
-                    <h1>Gerenciador de Tarefas - Xingu Contábil</h1>
+    <body>
+        <!-- TELA DE LOGIN -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-container">
+                <div class="login-header">
+                    <i class="fas fa-tasks"></i>
+                    <h1>Kanban Xingu</h1>
+                    <p>Faça login para acessar suas tarefas</p>
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary" id="filterBtn">
-                        <i class="fas fa-filter"></i>
-                        Filtros
+    
+                <div class="login-methods">
+                    <!-- Login com Google -->
+                    <button id="googleLoginBtn" class="login-btn google-btn">
+                        <i class="fab fa-google"></i>
+                        Entrar com Google
                     </button>
-                    <button class="btn btn-primary" id="addTaskBtn">
-                        <i class="fas fa-plus"></i>
-                        Nova Tarefa
-                    </button>
+    
+                    <!-- Divisor -->
+                    <div class="login-divider">
+                        <span>ou</span>
+                    </div>
+    
+                    <!-- Login com Email -->
+                    <form id="loginForm" class="login-form">
+                        <div class="form-group">
+                            <input type="email" id="loginEmail" placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="loginPassword" placeholder="Senha" required>
+                        </div>
+                        <button type="submit" class="login-btn primary-btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Entrar
+                        </button>
+                    </form>
+    
+                    <!-- Link para Cadastro -->
+                    <div class="login-footer">
+                        <p>Não tem conta? <a href="#" id="showRegisterLink">Cadastre-se</a></p>
+                    </div>
+                </div>
+    
+                <!-- Tela de Cadastro (oculta inicialmente) -->
+                <div class="register-form" id="registerForm" style="display: none;">
+                    <h3>Criar Conta</h3>
+                    <form id="registerFormSubmit">
+                        <div class="form-group">
+                            <input type="email" id="registerEmail" placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="registerPassword" placeholder="Senha (mínimo 6 caracteres)" required>
+                        </div>
+                        <button type="submit" class="login-btn primary-btn">
+                            <i class="fas fa-user-plus"></i>
+                            Cadastrar
+                        </button>
+                    </form>
+                    <div class="login-footer">
+                        <p>Já tem conta? <a href="#" id="showLoginLink">Fazer login</a></p>
+                    </div>
                 </div>
             </div>
+        </div>
+    
+        <!-- RESTO DO SISTEMA (já existe) -->
+        <div id="appContent" style="display: none;">
+        <!-- Todo o conteúdo do seu Kanban atual fica aqui -->
+    
+    <!-- Container Principal -->
+        <header class="header">
+            <div class="header-left">
+                <h1>
+                    <i class="fas fa-clipboard-list"></i>
+                    Gerenciador de Tarefas - Xingu Contábil
+                </h1>
+            </div>
+            <div class="header-actions">
+                <!-- BOTÃO DE LOGOUT (NOVO) -->
+                <button id="logoutBtn" class="btn btn-secondary" title="Sair do sistema">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+        
+                <!-- Botões existentes -->
+                <button id="addTaskBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nova Tarefa
+                </button>
+                <button id="filterBtn" class="btn btn-secondary">
+                    <i class="fas fa-filter"></i> Filtros
+                </button>
+            </div>
         </header>
-
+    
         <!-- Conteúdo Principal -->
         <main class="main-content">
             <!-- Barra de Pesquisa -->
@@ -207,21 +279,27 @@
         <!-- Firebase SDK -->
         <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
         <!-- Configuração do Firebase -->
+        
         <script>
-        const firebaseConfig = {
-            apiKey: "AIzasYBZ1LSi2Ox01NgQz9BX0jExf35H1Ikr-IE",
-            authDomain: "kanban-xingu.firebaseapp.com",
-            projectId: "kanban-xingu",
-            storageBucket: "kanban-xingu.firebasestorage.app",
-            messagingSenderId: "961906875844",
-            appId: "1:961906875844:web:96aa2601dc50b5f2ab5891"
-        };
+            // COLE AS SUAS CREDENCIAIS EXATAS AQUI (que você copiou do Firebase Console)
+            const firebaseConfig = {
+                apiKey: "AIzaSyBZTL5lZ0x0iWgQz9BX0jExf35H11kr-TE",
+                authDomain: "kanban-xingu.firebaseapp.com",
+                projectId: "kanban-xingu",
+                storageBucket: "kanban-xingu.firebasestorage.app",
+                messagingSenderId: "961906875844",
+                appId: "1:961906875844:web:96aa2601dc50b5f2ab5891"
+            };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+            const auth = firebase.auth();
+
+            console.log('🔥 Firebase inicializado:', firebase.apps.length > 0);
         </script>
 
         <!-- JavaScript Principal -->

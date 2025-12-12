@@ -1,5 +1,4 @@
 // ===== KANBAN PRO - SISTEMA DE GERENCIAMENTO DE TAREFAS =====
-
 class KanbanApp {
     constructor() {
         // Coleções do Firebase
@@ -663,7 +662,72 @@ async saveTask(taskData) {
     }
 }
 
-// Inicializar a aplicação quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = new KanbanApp();
+// ===== SISTEMA DE AUTENTICAÇÃO =====
+const auth = firebase.auth();
+
+// Verificar se usuário está logado
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // Usuário logado - mostrar o sistema
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appContent').style.display = 'block';
+        console.log('Usuário logado:', user.email);
+    } else {
+        // Usuário não logado - mostrar tela de login
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('appContent').style.display = 'none';
+    }
 });
+
+// Login com Google
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('googleLoginBtn').addEventListener('click', async () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            await auth.signInWithPopup(provider);
+        } catch (error) {
+            alert('Erro ao fazer login com Google: ' + error.message);
+        }
+    });
+
+    // Login com Email/Senha
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+        } catch (error) {
+            alert('Erro ao fazer login: ' + error.message);
+        }
+    });
+
+    // Cadastro
+    document.getElementById('registerFormSubmit').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        try {
+            await auth.createUserWithEmailAndPassword(email, password);
+            alert('Conta criada com sucesso!');
+        } catch (error) {
+            alert('Erro ao criar conta: ' + error.message);
+        }
+    });
+
+    // Alternar entre Login e Cadastro
+    document.getElementById('showRegisterLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelector('.login-methods').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+    });
+
+    document.getElementById('showLoginLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelector('.login-methods').style.display = 'flex';
+        document.getElementById('registerForm').style.display = 'none';
+    });
+});
+// ===== FIM DO SISTEMA DE AUTENTICAÇÃO =====
