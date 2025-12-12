@@ -13,74 +13,70 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <body>
-        <!-- TELA DE LOGIN -->
-        <div id="loginScreen" class="login-screen">
-            <div class="login-container">
-                <div class="login-header">
-                    <i class="fas fa-tasks"></i>
-                    <h1>Kanban Xingu</h1>
-                    <p>Faça login para acessar suas tarefas</p>
+     
+    <!-- ========== TELA DE LOGIN ========== -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-clipboard-list"></i>
+                <h1>Kanban Xingu</h1>
+                <p>Faça login para acessar suas tarefas</p>
+            </div>
+
+            <div id="loginMethods" class="login-methods">
+                <!-- Login com Google -->
+                <button id="googleLoginBtn" class="login-btn google-btn" type="button">
+                    <i class="fab fa-google"></i>
+                    Entrar com Google
+                </button>
+
+                <!-- Divisor -->
+                <div class="login-divider">
+                    <span>ou</span>
                 </div>
-    
-                <div class="login-methods">
-                    <!-- Login com Google -->
-                    <button id="googleLoginBtn" class="login-btn google-btn">
-                        <i class="fab fa-google"></i>
-                        Entrar com Google
+
+                <!-- Login com Email -->
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" class="form-input" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" class="form-input" placeholder="Senha" required>
+                    </div>
+                    <button type="submit" class="login-btn primary-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Entrar
                     </button>
-    
-                    <!-- Divisor -->
-                    <div class="login-divider">
-                        <span>ou</span>
-                    </div>
-    
-                    <!-- Login com Email -->
-                    <form id="loginForm" class="login-form">
-                        <div class="form-group">
-                            <input type="email" id="loginEmail" placeholder="Email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="password" id="loginPassword" placeholder="Senha" required>
-                        </div>
-                        <button type="submit" class="login-btn primary-btn">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Entrar
-                        </button>
-                    </form>
-    
-                    <!-- Link para Cadastro -->
-                    <div class="login-footer">
-                        <p>Não tem conta? <a href="#" id="showRegisterLink">Cadastre-se</a></p>
-                    </div>
-                </div>
-    
-                <!-- Tela de Cadastro (oculta inicialmente) -->
-                <div class="register-form" id="registerForm" style="display: none;">
-                    <h3>Criar Conta</h3>
-                    <form id="registerFormSubmit">
-                        <div class="form-group">
-                            <input type="email" id="registerEmail" placeholder="Email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="password" id="registerPassword" placeholder="Senha (mínimo 6 caracteres)" required>
-                        </div>
-                        <button type="submit" class="login-btn primary-btn">
-                            <i class="fas fa-user-plus"></i>
-                            Cadastrar
-                        </button>
-                    </form>
-                    <div class="login-footer">
-                        <p>Já tem conta? <a href="#" id="showLoginLink">Fazer login</a></p>
-                    </div>
+                </form>
+
+                <!-- Link para Cadastro -->
+                <div class="login-footer">
+                    <p>Não tem conta? <a href="#" id="showRegisterLink">Cadastre-se</a></p>
                 </div>
             </div>
+
+            <!-- Tela de Cadastro (oculta inicialmente) -->
+            <div id="registerFormDiv" style="display: none;">
+                <button id="backToLoginBtn" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h3>Criar Conta</h3>
+                <form id="registerForm" class="login-form">
+                    <div class="form-group">
+                        <input type="email" id="registerEmail" class="form-input" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerPassword" class="form-input" placeholder="Senha (mínimo 6 caracteres)" required>
+                    </div>
+                    <button type="submit" class="login-btn primary-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Cadastrar
+                    </button>
+                </form>
+            </div>
         </div>
-    
-        <!-- RESTO DO SISTEMA (já existe) -->
-        <div id="appContent" style="display: none;">
-        <!-- Todo o conteúdo do seu Kanban atual fica aqui -->
-    
+    </div>
+
     <!-- Container Principal -->
         <header class="header">
             <div class="header-left">

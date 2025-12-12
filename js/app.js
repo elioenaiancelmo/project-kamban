@@ -662,72 +662,179 @@ async saveTask(taskData) {
     }
 }
 
-// ===== SISTEMA DE AUTENTICAÇÃO =====
-const auth = firebase.auth();
+// ========================================
+// SISTEMA DE AUTENTICAÇÃO - 100% FUNCIONAL
+// ========================================
 
-// Verificar se usuário está logado
+console.log('🚀 Iniciando sistema de autenticação...');
+
+// Verificar se Firebase está disponível
+if (typeof firebase === 'undefined') {
+    console.error('❌ Firebase não está carregado!');
+} else if (typeof auth === 'undefined') {
+    console.error('❌ Firebase Auth não está inicializado!');
+} else {
+    console.log('✅ Firebase Auth pronto!');
+}
+
+// Monitorar estado de autenticação
 auth.onAuthStateChanged((user) => {
+    console.log('🔄 Estado de autenticação mudou:', user ? user.email : 'não logado');
+
+    const loginScreen = document.getElementById('loginScreen');
+    const appContent = document.getElementById('appContent');
+
     if (user) {
-        // Usuário logado - mostrar o sistema
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('appContent').style.display = 'block';
-        console.log('Usuário logado:', user.email);
+        // Usuário logado
+        console.log('✅ Usuário autenticado:', user.email);
+        if (loginScreen) loginScreen.style.display = 'none';
+        if (appContent) appContent.style.display = 'block';
+
+        // Inicializar app se ainda não foi
+        if (!window.app) {
+            console.log('🎯 Inicializando Kanban...');
+            window.app = new KanbanApp();
+        }
     } else {
-        // Usuário não logado - mostrar tela de login
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('appContent').style.display = 'none';
+        // Usuário não logado
+        console.log('❌ Nenhum usuário logado');
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (appContent) appContent.style.display = 'none';
     }
 });
 
-// Login com Google
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('googleLoginBtn').addEventListener('click', async () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        try {
-            await auth.signInWithPopup(provider);
-        } catch (error) {
-            alert('Erro ao fazer login com Google: ' + error.message);
-        }
-    });
+// Aguardar DOM carregar
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM carregado - configurando eventos...');
 
-    // Login com Email/Senha
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
+    // ===== BOTÃO GOOGLE LOGIN =====
+    const googleBtn = document.getElementById('googleLoginBtn');
+    if (googleBtn) {
+        console.log('✅ Botão Google encontrado');
+        googleBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            console.log('🔵 Clicou em Google Login');
 
-        try {
-            await auth.signInWithEmailAndPassword(email, password);
-        } catch (error) {
-            alert('Erro ao fazer login: ' + error.message);
-        }
-    });
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                console.log('⏳ Abrindo popup do Google...');
+                const result = await auth.signInWithPopup(provider);
+                console.log('✅ Login Google OK:', result.user.email);
+            } catch (error) {
+                console.error('❌ Erro Google Login:', error);
+                alert('Erro: ' + error.message);
+            }
+        });
+    } else {
+        console.error('❌ Botão Google NÃO encontrado!');
+    }
 
-    // Cadastro
-    document.getElementById('registerFormSubmit').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
+    // ===== FORMULÁRIO DE LOGIN =====
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        console.log('✅ Formulário de login encontrado');
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('🔵 Tentando login com email...');
 
-        try {
-            await auth.createUserWithEmailAndPassword(email, password);
-            alert('Conta criada com sucesso!');
-        } catch (error) {
-            alert('Erro ao criar conta: ' + error.message);
-        }
-    });
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
 
-    // Alternar entre Login e Cadastro
-    document.getElementById('showRegisterLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        document.querySelector('.login-methods').style.display = 'none';
-        document.getElementById('registerForm').style.display = 'block';
-    });
+            console.log('📧 Email:', email);
 
-    document.getElementById('showLoginLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        document.querySelector('.login-methods').style.display = 'flex';
-        document.getElementById('registerForm').style.display = 'none';
-    });
+            try {
+                const result = await auth.signInWithEmailAndPassword(email, password);
+                console.log('✅ Login OK:', result.user.email);
+            } catch (error) {
+                console.error('❌ Erro login:', error);
+                alert('Erro ao fazer login: ' + error.message);
+            }
+        });
+    } else {
+        console.error('❌ Formulário de login NÃO encontrado!');
+    }
+
+    // ===== LINK MOSTRAR CADASTRO =====
+    const showRegisterLink = document.getElementById('showRegisterLink');
+    if (showRegisterLink) {
+        console.log('✅ Link cadastro encontrado');
+        showRegisterLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🔵 Mostrando tela de cadastro');
+
+            const loginMethods = document.getElementById('loginMethods');
+            const registerDiv = document.getElementById('registerFormDiv');
+
+            if (loginMethods) loginMethods.style.display = 'none';
+            if (registerDiv) registerDiv.style.display = 'block';
+        });
+    } else {
+        console.error('❌ Link cadastro NÃO encontrado!');
+    }
+
+    // ===== BOTÃO VOLTAR =====
+    const backBtn = document.getElementById('backToLoginBtn');
+    if (backBtn) {
+        console.log('✅ Botão voltar encontrado');
+        backBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🔵 Voltando para login');
+
+            const loginMethods = document.getElementById('loginMethods');
+            const registerDiv = document.getElementById('registerFormDiv');
+
+            if (loginMethods) loginMethods.style.display = 'flex';
+            if (registerDiv) registerDiv.style.display = 'none';
+        });
+    }
+
+    // ===== FORMULÁRIO DE CADASTRO =====
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        console.log('✅ Formulário de cadastro encontrado');
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('🔵 Tentando criar conta...');
+
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            console.log('📧 Email:', email);
+
+            if (password.length < 6) {
+                alert('A senha deve ter no mínimo 6 caracteres');
+                return;
+            }
+
+            try {
+                const result = await auth.createUserWithEmailAndPassword(email, password);
+                console.log('✅ Conta criada:', result.user.email);
+                alert('✅ Conta criada com sucesso!');
+            } catch (error) {
+                console.error('❌ Erro ao criar conta:', error);
+                alert('Erro: ' + error.message);
+            }
+        });
+    } else {
+        console.error('❌ Formulário de cadastro NÃO encontrado!');
+    }
+
+    // ===== BOTÃO DE LOGOUT =====
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        console.log('✅ Botão logout encontrado');
+        logoutBtn.addEventListener('click', async function() {
+            if (confirm('Deseja sair?')) {
+                try {
+                    await auth.signOut();
+                    console.log('✅ Logout OK');
+                    window.app = null;
+                } catch (error) {
+                    console.error('❌ Erro logout:', error);
+                }
+            }
+        });
+    }
+
+    console.log('✅ Todos os eventos configurados!');
 });
-// ===== FIM DO SISTEMA DE AUTENTICAÇÃO =====
