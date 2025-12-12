@@ -2,6 +2,9 @@
 
 class KanbanApp {
     constructor() {
+        // Coleções do Firebase
+        this.tasksCollection = db.collection('tasks');
+        this.columnsCollection = db.collection('columns');
         // Dados do sistema
         this.columns = [];
         this.tasks = [];
@@ -51,34 +54,47 @@ class KanbanApp {
 
     // Carregar colunas do banco de dados
     // Carregar colunas do banco de dados
+// Carregar colunas do Firebase
 async loadColumns() {
     try {
-        const response = await fetch('tables/kanban_columns?sort=position');
-        const data = await response.json();
-        this.columns = data.data;
+        const snapshot = await this.columnsCollection.orderBy('position').get();
+
+        if (snapshot.empty) {
+            // Se não existir, criar colunas padrão
+            const defaultColumns = [
+                { id: 'todo', title: 'A Fazer', position: 1, color: '#64748b', is_active: true },
+                { id: 'in_progress', title: 'Em Progresso', position: 2, color: '#f59e0b', is_active: true },
+                { id: 'done', title: 'Concluído', position: 3, color: '#10b981', is_active: true }
+            ];
+
+            for (const col of defaultColumns) {
+                await this.columnsCollection.doc(col.id).set(col);
+            }
+            this.columns = defaultColumns;
+        } else {
+            this.columns = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
     } catch (error) {
         console.error('Erro ao carregar colunas:', error);
-        // Colunas padrão caso haja erro
-        this.columns = [
-            { id: 'todo', title: 'A Fazer', position: 1, color: '#64748b', is_active: true },
-            { id: 'in_progress', title: 'Em Progresso', position: 2, color: '#f59e0b', is_active: true },
-            { id: 'done', title: 'Concluído', position: 3, color: '#10b981', is_active: true }
-        ];
+        this.showToast('Erro ao carregar colunas', 'error');
     }
 }
 
 
+
     // Carregar tarefas do banco de dados
-    async loadTasks() {
-        try {
-            const response = await fetch('tables/tasks?sort=position');
-            const data = await response.json();
-            this.tasks = data.data;
-        } catch (error) {
-            console.error('Erro ao carregar tarefas:', error);
-            this.tasks = [];
-        }
+    // Carregar tarefas do Firebase
+async loadTasks() {
+    try {
+        const snapshot = await this.tasksCollection.orderBy('position').get();
+        this.tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error('Erro ao carregar tarefas:', error);
+        this.showToast('Erro ao carregar tarefas', 'error');
+        this.tasks = [];
     }
+}
+
 
     // Renderizar o quadro Kanban
     renderBoard() {
@@ -279,38 +295,28 @@ async loadColumns() {
     }
 
     // Mover tarefa entre colunas
-    async moveTask(taskId, newColumnId) {
-        try {
-            const task = this.tasks.find(t => t.id === taskId);
-            if (!task || task.column_id === newColumnId) return;
+    // Mover tarefa entre colunas
+async moveTask(taskId, newColumnId) {
+    try {
+        const task = this.tasks.find(t => t.id === taskId);
+        if (!task || task.column_id === newColumnId) return;
 
-            // Atualizar no backend
-            const updatedTask = {
-                ...task,
-                column_id: newColumnId,
-                updated_at: Date.now()
-            };
+        await this.tasksCollection.doc(taskId).update({
+            column_id: newColumnId,
+            updated_at: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-            await fetch(`tables/tasks/${taskId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedTask)
-            });
-
-            // Atualizar localmente
-            task.column_id = newColumnId;
-            task.updated_at = updatedTask.updated_at;
-
-            // Re-renderizar o quadro
-            this.renderBoard();
-            this.updateStats();
-            
-            this.showToast('Tarefa movida com sucesso!', 'success');
-        } catch (error) {
-            console.error('Erro ao mover tarefa:', error);
-            this.showToast('Erro ao mover tarefa', 'error');
-        }
+        // Recarregar e re-renderizar
+        await this.loadTasks();
+        this.renderBoard();
+        this.updateStats();
+        this.showToast('Tarefa movida com sucesso!', 'success');
+    } catch (error) {
+        console.error('Erro ao mover tarefa:', error);
+        this.showToast('Erro ao mover tarefa', 'error');
     }
+}
+
 
     // Abrir modal de tarefa
     openTaskModal(columnId = null) {
@@ -348,6 +354,23 @@ async loadColumns() {
         document.getElementById('taskModal').classList.add('active');
     }
 
+    // Excluir tarefa do Firebase
+async deleteTask(taskId) {
+    if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
+
+    try {
+        await this.tasksCollection.doc(taskId).delete();
+
+        await this.loadTasks();
+        this.renderBoard();
+        this.updateStats();
+        this.showToast('Tarefa excluída com sucesso!', 'success');
+    } catch (error) {
+        console.error('Erro ao excluir tarefa:', error);
+        this.showToast('Erro ao excluir tarefa', 'error');
+    }
+}
+
     // Fechar modal de tarefa
     closeTaskModal() {
         document.getElementById('taskModal').classList.remove('active');
@@ -358,76 +381,47 @@ async loadColumns() {
     }
 
     // Salvar tarefa (criar ou editar)
-    async saveTask(taskData) {
-        try {
-            if (this.isEditMode) {
-                // Atualizar tarefa existente
-                const task = this.tasks.find(t => t.id === this.editingTaskId);
-                const updatedTask = { ...task, ...taskData };
-
-                await fetch(`tables/tasks/${this.editingTaskId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedTask)
-                });
-                
-                // Atualizar localmente
-                Object.assign(task, taskData);
-                this.showToast('Tarefa atualizada com sucesso!', 'success');
-            } else {
-                // Criar nova tarefa
-                const newTask = {
-                    id: this.generateId(),
-                    title: taskData.title,
-                    description: taskData.description,
-                    priority: taskData.priority,
-                    category: taskData.category,
-                    due_date: taskData.due_date,
-                    column_id: this.selectedColumnForNewTask || 'todo',
-                    position: this.tasks.length,
-                    created_at: Date.now(),
-                    updated_at: Date.now()
-                };
-
-                await fetch('tables/tasks', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newTask)
-                });
-                
-                this.tasks.push(newTask);
-                this.showToast('Tarefa criada com sucesso!', 'success');
-            }
-
-            this.closeTaskModal();
-            this.renderBoard();
-            this.updateStats();
-        } catch (error) {
-            console.error('Erro ao salvar tarefa:', error);
-            this.showToast('Erro ao salvar tarefa', 'error');
-        }
-    }
-
-    // Excluir tarefa
-    async deleteTask(taskId) {
-        if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
-
-        try {
-            await fetch(`tables/tasks/${taskId}`, {
-                method: 'DELETE'
+    // Salvar tarefa no Firebase
+async saveTask(taskData) {
+    try {
+        if (this.isEditMode) {
+            // Atualizar tarefa existente
+            await this.tasksCollection.doc(this.editingTaskId).update({
+                title: taskData.title,
+                description: taskData.description,
+                priority: taskData.priority,
+                category: taskData.category,
+                due_date: taskData.due_date,
+                updated_at: firebase.firestore.FieldValue.serverTimestamp()
             });
-
-            // Remover localmente
-            this.tasks = this.tasks.filter(t => t.id !== taskId);
-
-            this.renderBoard();
-            this.updateStats();
-            this.showToast('Tarefa excluída com sucesso!', 'success');
-        } catch (error) {
-            console.error('Erro ao excluir tarefa:', error);
-            this.showToast('Erro ao excluir tarefa', 'error');
+            this.showToast('Tarefa atualizada com sucesso!', 'success');
+        } else {
+            // Criar nova tarefa
+            await this.tasksCollection.add({
+                title: taskData.title,
+                description: taskData.description,
+                priority: taskData.priority,
+                category: taskData.category,
+                due_date: taskData.due_date,
+                column_id: this.selectedColumnForNewTask || 'todo',
+                position: this.tasks.length,
+                created_at: firebase.firestore.FieldValue.serverTimestamp(),
+                updated_at: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            this.showToast('Tarefa criada com sucesso!', 'success');
         }
+
+        // Recarregar tarefas
+        await this.loadTasks();
+        this.closeTaskModal();
+        this.renderBoard();
+        this.updateStats();
+    } catch (error) {
+        console.error('Erro ao salvar tarefa:', error);
+        this.showToast('Erro ao salvar tarefa', 'error');
     }
+}
+
 
     // Atualizar estatísticas
     updateStats() {
