@@ -79,28 +79,26 @@
     </div>
 
     <!-- Container Principal -->
-        <header class="header">
-            <div class="header-left">
-                <h1>
-                    <i class="fas fa-clipboard-list"></i>
-                    Gerenciador de Tarefas - Xingu Contábil
-                </h1>
-            </div>
-            <div class="header-actions">
-                <!-- BOTÃO DE LOGOUT (NOVO) -->
-                <button id="logoutBtn" class="btn btn-secondary" title="Sair do sistema">
-                    <i class="fas fa-sign-out-alt"></i> Sair
-                </button>
-        
-                <!-- Botões existentes -->
-                <button id="addTaskBtn" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Nova Tarefa
-                </button>
-                <button id="filterBtn" class="btn btn-secondary">
-                    <i class="fas fa-filter"></i> Filtros
-                </button>
-            </div>
-        </header>
+    <header class="header">
+        <div class="header-left">
+            <h1>
+                <i class="fas fa-clipboard-list"></i>
+                Gerenciador de Tarefas - Xingu Contábil
+            </h1>
+        </div>
+        <div class="header-right"> <!-- Renomeado para header-right para clareza -->
+            <button id="addTaskBtn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nova Tarefa
+            </button>
+            <button id="filterBtn" class="btn btn-secondary">
+                <i class="fas fa-filter"></i> Filtros
+            </button>
+            <button id="logoutBtn" class="btn btn-secondary" title="Sair do sistema">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+        </div>
+    </header>
+    
     
         <!-- Conteúdo Principal -->
         <main class="main-content">

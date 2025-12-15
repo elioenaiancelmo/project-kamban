@@ -46,22 +46,20 @@ body {
 }
 
 /* ===== HEADER ===== */
+/* Estilo do Header */
 .header {
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--dark-border);
-    padding: 1rem 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    background-color: var(--dark-blue-800); /* Cor de fundo do header */
+    padding: 1.5rem 2rem; /* Espaçamento interno */
+    border-bottom: 1px solid var(--dark-blue-700); /* Borda inferior */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
 .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
+    display: flex; /* Ativa o flexbox para alinhar logo e ações */
+    justify-content: space-between; /* Alinha o logo à esquerda e as ações à direita */
+    align-items: center; /* Centraliza verticalmente */
+    max-width: 1400px; /* Largura máxima do conteúdo */
+    margin: 0 auto; /* Centraliza o conteúdo na página */
 }
 
 .logo {
@@ -71,21 +69,23 @@ body {
 }
 
 .logo i {
-    font-size: 1.5rem;
+    font-size: 1.8rem; /* Aumentei um pouco o tamanho do ícone para combinar com o h1 */
     color: var(--primary-color);
 }
 
 .logo h1 {
-    font-size: 1.5rem;
+    font-size: 1.8rem; /* Aumentei o tamanho da fonte do título */
     font-weight: 700;
+    /* Mantive o gradiente que você já tinha, mas se quiser cor sólida, pode mudar */
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .header-actions {
-    display: flex;
-    gap: 1rem;
+    display: flex; /* Ativa o flexbox para os botões */
+    gap: 1rem; /* Espaçamento entre os botões */
+    align-items: center; /* Centraliza verticalmente os botões */
 }
 
 /* ===== BOTÕES ===== */
@@ -1033,4 +1033,50 @@ body {
 .form-input:focus {
     outline: none;
     border-color: #3b82f6;
+}
+
+/* Estilos gerais para botões (se já existirem, apenas verifique e ajuste se necessário) */
+.btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color-dark);
+    border-color: var(--primary-color-dark);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--dark-blue-700);
+    color: var(--light-gray);
+    border: 2px solid var(--dark-blue-700);
+}
+
+/* Efeito hover para o botão Sair */
+#logoutBtn:hover {
+    border-color: var(--red-500); /* Borda vermelha ao passar o mouse */
+    color: var(--red-500); /* Texto vermelho ao passar o mouse */
+    background-color: var(--dark-blue-700); /* Mantém o fundo escuro */
+    transform: translateY(-1px); /* Pequeno efeito de elevação */
+}
+
+/* Defina a cor vermelha se ainda não tiver no seu CSS */
+:root {
+    /* ... outras variáveis que você já tem ... */
+    --red-500: #ef4444; /* Vermelho padrão */
+    --red-600: #dc2626; /* Vermelho mais escuro para hover, se quiser */
 }
