@@ -125,45 +125,53 @@ body {
     width: 100%;
 }
 
-/* ===== BARRA DE PESQUISA ===== */
+/* Estilo da Seção de Busca */
 .search-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    gap: 1rem;
+    margin-bottom: 1.5rem; /* Espaçamento abaixo da barra de busca */
+    padding: 0 2rem; /* Alinha com o padding do header */
+}
+.search-input-wrapper {
+    position: relative; /* Essencial para posicionar o ícone de forma absoluta dentro */
+    display: flex; /* Para garantir que o input ocupe o espaço e o ícone esteja alinhado */
+    align-items: center; /* Centraliza o ícone verticalmente com o input */
 }
 
-.search-container {
-    position: relative;
-    flex: 1;
-    max-width: 400px;
+#searchInput {
+    width: 100%; /* Ocupa toda a largura disponível */
+    padding: 0.75rem 1rem 0.75rem 3rem; /* Ajustei o padding: top, right, bottom, left. O padding-left é para dar espaço ao ícone */
+    border: 1px solid var(--dark-blue-600); /* Borda do campo de busca */
+    border-radius: 10px; /* Cantos arredondados */
+    background-color: var(--dark-blue-700); /* Cor de fundo do campo */
+    color: var(--white); /* Cor do texto digitado */
+    font-size: 1rem; /* Tamanho da fonte */
+    transition: border-color 0.3s ease; /* Transição suave para a borda */
 }
 
-.search-container i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
+#searchInput::placeholder {
+    color: var(--light-gray); /* Cor do placeholder */
 }
 
-.search-container input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 3rem;
-    background: var(--dark-card);
-    border: 1px solid var(--dark-border);
-    border-radius: var(--border-radius);
-    color: var(--text-primary);
-    font-size: 0.875rem;
+#searchInput:focus {
+    outline: none; /* Remove o contorno padrão ao focar */
+    border-color: var(--primary-color); /* Borda colorida ao focar */
 }
 
-.search-container input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+/* Estilo para o ícone da lupa */
+.search-icon {
+    position: absolute; /* Posiciona o ícone de forma absoluta em relação ao .search-input-wrapper */
+    left: 1rem; /* Distância da esquerda */
+    color: var(--light-gray); /* Cor do ícone */
+    font-size: 1.1rem; /* Tamanho do ícone */
+    pointer-events: none; /* Garante que o ícone não interfira com o clique no input */
+    z-index: 1; /* Garante que o ícone fique acima do input */
 }
 
+/* Sobrescrever estilos padrão do SVG se necessário */
+.svg-inline--fa.search-icon {
+    height: 1.1em; /* Ajusta a altura do SVG para o tamanho da fonte */
+    width: 1.1em; /* Ajusta a largura do SVG */
+    vertical-align: -0.125em; /* Pequeno ajuste vertical para centralizar */
+}
 .view-options {
     display: flex;
     gap: 0.5rem;
