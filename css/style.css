@@ -125,53 +125,41 @@ body {
     width: 100%;
 }
 
-/* Estilo da Seção de Busca */
+/* ==== BARRA DE PESQUISA ==== */
 .search-section {
-    margin-bottom: 1.5rem; /* Espaçamento abaixo da barra de busca */
-    padding: 0 2rem; /* Alinha com o padding do header */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
 }
-.search-input-wrapper {
-    position: relative; /* Essencial para posicionar o ícone de forma absoluta dentro */
-    display: flex; /* Para garantir que o input ocupe o espaço e o ícone esteja alinhado */
-    align-items: center; /* Centraliza o ícone verticalmente com o input */
+.search-container {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
 }
-
-#searchInput {
-    width: 100%; /* Ocupa toda a largura disponível */
-    padding: 0.75rem 1rem 0.75rem 3rem; /* Ajustei o padding: top, right, bottom, left. O padding-left é para dar espaço ao ícone */
-    border: 1px solid var(--dark-blue-600); /* Borda do campo de busca */
-    border-radius: 10px; /* Cantos arredondados */
-    background-color: var(--dark-blue-700); /* Cor de fundo do campo */
-    color: var(--white); /* Cor do texto digitado */
-    font-size: 1rem; /* Tamanho da fonte */
-    transition: border-color 0.3s ease; /* Transição suave para a borda */
+.search-container i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
 }
-
-#searchInput::placeholder {
-    color: var(--light-gray); /* Cor do placeholder */
+.search-container input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 0.875rem;
 }
-
-#searchInput:focus {
-    outline: none; /* Remove o contorno padrão ao focar */
-    border-color: var(--primary-color); /* Borda colorida ao focar */
-}
-
-/* Estilo para o ícone da lupa */
-.search-icon {
-    position: absolute; /* Posiciona o ícone de forma absoluta em relação ao .search-input-wrapper */
-    left: 1rem; /* Distância da esquerda */
-    color: var(--light-gray); /* Cor do ícone */
-    font-size: 1.1rem; /* Tamanho do ícone */
-    pointer-events: none; /* Garante que o ícone não interfira com o clique no input */
-    z-index: 1; /* Garante que o ícone fique acima do input */
+.search-container input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-/* Sobrescrever estilos padrão do SVG se necessário */
-.svg-inline--fa.search-icon {
-    height: 1.1em; /* Ajusta a altura do SVG para o tamanho da fonte */
-    width: 1.1em; /* Ajusta a largura do SVG */
-    vertical-align: -0.125em; /* Pequeno ajuste vertical para centralizar */
-}
 .view-options {
     display: flex;
     gap: 0.5rem;
@@ -1044,3 +1032,34 @@ body {
     --red-500: #ef4444; /* Vermelho padrão */
     --red-600: #dc2626; /* Vermelho mais escuro para hover, se quiser */
 }
+/* ===== AJUSTE DO ÍCONE DA LUPA NA BUSCA ===== */
+
+/* Garante que o container da busca seja o ponto de referência para o ícone */
+.search-container {
+    position: relative; /* Essencial para posicionar o ícone de forma absoluta dentro */
+    display: flex; /* Para alinhar o ícone e o input lado a lado */
+    align-items: center; /* Centraliza o ícone verticalmente com o input */
+    /* Se você já tem .search-container com display: flex e align-items: center,
+       apenas adicione position: relative; */
+}
+
+/* Estilo para o ícone da lupa (SVG) */
+.search-container .svg-inline--fa { /* Seleciona o SVG dentro de .search-container */
+    position: absolute; /* Posiciona o ícone de forma absoluta */
+    left: 1rem; /* Distância da borda esquerda do input */
+    color: var(--light-gray); /* Cor do ícone (ajuste se precisar de outra cor) */
+    font-size: 1.1rem; /* Tamanho do ícone (ajuste se precisar de outro tamanho) */
+    pointer-events: none; /* Garante que o ícone não bloqueie o clique no input */
+    z-index: 1; /* Garante que o ícone fique acima do input */
+
+    /* Ajustes específicos para o SVG do Font Awesome */
+    height: 1.1em; /* Garante que a altura do SVG seja correta */
+    width: 1.1em; /* Garante que a largura do SVG seja correta */
+    vertical-align: -0.125em; /* Pequeno ajuste vertical para centralizar melhor */
+}
+
+/* Ajusta o padding do input para dar espaço ao ícone */
+#searchInput {
+    padding-left: 3rem; /* Adiciona espaço à esquerda para o ícone. Mantenha o padding-top, padding-right, padding-bottom que você já tinha. */
+}
+
